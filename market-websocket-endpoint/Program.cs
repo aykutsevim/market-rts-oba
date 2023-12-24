@@ -50,7 +50,7 @@ app.Run();
 async Task Send(HttpContext context, WebSocket webSocket)
 {
     var buffer = new byte[1024 * 4];
-    double TotalDeliveredEnergy = 0.0f;
+    double totalDeliveredEnergy = 0.0f;
 
     while (webSocket.State == WebSocketState.Open)
     {
@@ -59,12 +59,27 @@ async Task Send(HttpContext context, WebSocket webSocket)
         if (result.MessageType == WebSocketMessageType.Text)
         {
             var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-            Console.WriteLine($"Message received: {message}");
+
+            Console.WriteLine(message);
 
             // Parse message to EnergyDeliveryRequest
-            var energyDeliveryRequest = JsonSerializer.Deserialize<EnergyDeliveryRequest>(message);
+            var energyDeliveryRequest = JsonSerializer.Deserialize<EnergyDeliveryRequest>(message, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                
+            });
 
-            await webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes($"Response {DateTime.UtcNow:f}")), WebSocketMessageType.Text, true, CancellationToken.None);
+            totalDeliveredEnergy += energyDeliveryRequest.Amount;
+            Console.WriteLine($"Total delivered for {energyDeliveryRequest.Id}: {totalDeliveredEnergy}");
+
+            var energyDeliveryResponse = new EnergyDeliveryResponse {
+                TotalDeliveredEnergy = totalDeliveredEnergy,
+                TotalConsumedEnergy = 0.0f
+            };
+
+            var response = JsonSerializer.Serialize<EnergyDeliveryResponse>(energyDeliveryResponse);
+
+            await webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(response)), WebSocketMessageType.Text, true, CancellationToken.None);
         }
         else if (result.MessageType == WebSocketMessageType.Close)
         {

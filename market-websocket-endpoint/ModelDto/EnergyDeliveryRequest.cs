@@ -2,9 +2,9 @@
 {
     public class EnergyDeliveryRequest
     {
-        public string Id;
-        public DateTimeOffset DeliveryStart;
-        public DateTimeOffset DeliveryEnd;
-        public float Amount;
+        public string Id { get; set; }
+        public DateTimeOffset DeliveryStart { get; set; }
+        public DateTimeOffset DeliveryEnd { get; set; }
+        public float Amount { get; set; }
     }
 }
