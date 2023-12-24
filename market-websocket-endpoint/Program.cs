@@ -1,7 +1,9 @@
+using market_websocket_endpoint.ModelDto;
 using System.Net;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +50,7 @@ app.Run();
 async Task Send(HttpContext context, WebSocket webSocket)
 {
     var buffer = new byte[1024 * 4];
+    double TotalDeliveredEnergy = 0.0f;
 
     while (webSocket.State == WebSocketState.Open)
     {
@@ -57,6 +60,9 @@ async Task Send(HttpContext context, WebSocket webSocket)
         {
             var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
             Console.WriteLine($"Message received: {message}");
+
+            // Parse message to EnergyDeliveryRequest
+            var energyDeliveryRequest = JsonSerializer.Deserialize<EnergyDeliveryRequest>(message);
 
             await webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes($"Response {DateTime.UtcNow:f}")), WebSocketMessageType.Text, true, CancellationToken.None);
         }
