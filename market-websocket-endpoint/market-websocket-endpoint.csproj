@@ -7,4 +7,9 @@
     <RootNamespace>market_websocket_endpoint</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.7.10" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+  </ItemGroup>
+
 </Project>

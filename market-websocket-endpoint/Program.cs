@@ -1,9 +1,12 @@
+using market_websocket_endpoint.Core;
 using market_websocket_endpoint.ModelDto;
 using System.Net;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using StackExchange.Redis;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +46,23 @@ app.Use(async (context, next) =>
     {
         await next();
     }
+});
+
+var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnectionString");
+
+if (redisConnectionString == null)
+{
+    throw new Exception("Redis connection string is missing");
+}
+
+var redis = ConnectionMultiplexer.Connect(redisConnectionString);
+
+var subscriber = redis.GetSubscriber();
+subscriber.Subscribe(channel: "MarketPrices", async (channel, message) =>
+{
+    // Forward the Redis message to connected WebSocket clients
+    Console.WriteLine("Subscribed");
+    //await MarketWebSocketManager.SendToAllAsync("eventName", message);
 });
 
 app.Run();
@@ -86,4 +106,16 @@ async Task Send(HttpContext context, WebSocket webSocket)
             await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
         }
     }
+}
+
+
+async Task WebSocketHandler(WebSocket webSocket, HttpContext context)
+{
+    // Handle WebSocket connections
+    var connectionId = MarketWebSocketManager.AddSocket(webSocket);
+
+    // Your WebSocket handling logic goes here
+
+    // Optionally, remove the WebSocket from the manager when the connection is closed
+    MarketWebSocketManager.RemoveSocket(connectionId);
 }
