@@ -1,4 +1,4 @@
-﻿namespace market_websocket_endpoint.Model
+﻿namespace MarketWebsocketEndpoint.Model
 {
     public class EnergyDelivery
     {

@@ -1,4 +1,4 @@
-﻿namespace market_websocket_endpoint.ModelDto
+﻿namespace MarketWebsocketEndpoint.ModelDto
 {
     public class EnergyDeliveryResponse
     {

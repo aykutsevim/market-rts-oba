@@ -1,9 +1,9 @@
-﻿namespace market_websocket_endpoint.Model
+﻿namespace MarketWebsocketEndpoint.Model
 {
     public class Player
     {
-        public Guid ID { get; set; }
-        public double TotalDelivered { get; set; }
+        public Guid Id { get; set; }
+        public double TotalDeliveredEnergy { get; set; }
         public List<EnergyDelivery> EnergyDeliveries { get; set; } = new List<EnergyDelivery>();
     }
 }

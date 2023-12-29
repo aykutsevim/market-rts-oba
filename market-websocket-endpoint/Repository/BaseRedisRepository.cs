@@ -1,6 +1,6 @@
 ﻿using StackExchange.Redis;
 
-namespace market_websocket_endpoint.Repository
+namespace MarketWebsocketEndpoint.Repository
 {
     public abstract class BaseRedisRepository<T>
     {

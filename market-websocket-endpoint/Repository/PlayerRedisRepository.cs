@@ -1,9 +1,9 @@
-﻿using market_websocket_endpoint.Model;
+﻿using MarketWebsocketEndpoint.Model;
 using StackExchange.Redis;
 using System.Numerics;
 using System.Text.Json;
 
-namespace market_websocket_endpoint.Repository
+namespace MarketWebsocketEndpoint.Repository
 {
     public class PlayerRedisRepository : BaseRedisRepository<Player>
     {
@@ -18,7 +18,7 @@ namespace market_websocket_endpoint.Repository
 
         protected override string GetKey(Player entity)
         {
-            return entity.ID.ToString();
+            return entity.Id.ToString();
         }
 
         protected override string Serialize(Player entity)
