@@ -15,7 +15,7 @@ namespace MarketWebsocketEndpoint.Service
             _redisConnection = redisConnection ?? throw new ArgumentNullException(nameof(redisConnection));
         }
 
-        public async Task<EnergyDeliveryResponse> DeliverEnergy(EnergyDeliveryRequest delivery, PlayerSession session)
+        public async Task<ProductionDeliveryResponse> DeliverEnergy(ProductionDeliveryRequest delivery, PlayerSession session)
         {
             if (session.Player == null)
             {
@@ -43,7 +43,7 @@ namespace MarketWebsocketEndpoint.Service
 
             Console.WriteLine($"Total delivered for {session.Player.Id}: {session.Player.TotalDeliveredEnergy}");
 
-            var energyDeliveryResponse = new EnergyDeliveryResponse
+            var energyDeliveryResponse = new ProductionDeliveryResponse
             {
                 TotalDeliveredEnergy = session.Player.TotalDeliveredEnergy,
                 TotalConsumedEnergy = 0.0f

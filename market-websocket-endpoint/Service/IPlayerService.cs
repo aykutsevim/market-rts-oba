@@ -5,6 +5,6 @@ namespace MarketWebsocketEndpoint.Service
 {
     public interface IPlayerService
     {
-        Task<EnergyDeliveryResponse> DeliverEnergy(EnergyDeliveryRequest delivery, PlayerSession session);
+        Task<ProductionDeliveryResponse> DeliverEnergy(ProductionDeliveryRequest delivery, PlayerSession session);
     }
 }

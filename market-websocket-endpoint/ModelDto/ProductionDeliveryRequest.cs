@@ -1,6 +1,6 @@
 ﻿namespace MarketWebsocketEndpoint.ModelDto
 {
-    public class EnergyDeliveryRequest
+    public class ProductionDeliveryRequest
     {
         public Guid Id { get; set; }
         public DateTimeOffset DeliveryStart { get; set; }
