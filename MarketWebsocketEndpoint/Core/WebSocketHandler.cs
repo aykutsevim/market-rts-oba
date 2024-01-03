@@ -77,6 +77,11 @@ namespace MarketWebsocketEndpoint.Core
                         PropertyNameCaseInsensitive = true,
                     });
 
+                    if (genericRequest == null)
+                    {
+                        continue;
+                    }
+
                     switch (genericRequest.MessageType)
                     {   
                         case MessageTypeEnum.ConsumptionDeliveryRequest:
@@ -95,7 +100,7 @@ namespace MarketWebsocketEndpoint.Core
                 }
             }
             // Optionally, remove the WebSocket from the manager when the connection is closed
-            MarketSessionManager.RemoveSocket(connectionId);
+            await MarketSessionManager.RemoveSocket(connectionId);
         }
 
     }

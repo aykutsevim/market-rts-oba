@@ -30,6 +30,19 @@ WebSocketHandler.REDIS_CONNECTION_STRING = builder.Configuration.GetConnectionSt
 
 app.UseWebSockets(wsOptions);
 
+using (var redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnectionString")))
+{
+    var subscriber = redis.GetSubscriber();
+    subscriber.Subscribe(channel: "priceChannel", async (channel, message) =>
+    {
+        // Forward the Redis message to connected WebSocket clients
+        Console.WriteLine("Subscribed");
+        await MarketSessionManager.SendToAllAsync("priceChanged", message);
+    });
+}
+
+
+
 app.Use(async (context, next) =>
 {
     if (context.Request.Path == "/ws")
@@ -50,25 +63,6 @@ app.Use(async (context, next) =>
     }
 });
 
-
-
 app.Run();
 
-/*
-async Task Send(HttpContext context, WebSocket webSocket)
-{
 
-}*/
-
-
-
-
-/*
-var subscriber = redis.GetSubscriber();
-subscriber.Subscribe(channel: "MarketPrices", async (channel, message) =>
-{
-    // Forward the Redis message to connected WebSocket clients
-    Console.WriteLine("Subscribed");
-    //await MarketWebSocketManager.SendToAllAsync("eventName", message);
-});
-*/
