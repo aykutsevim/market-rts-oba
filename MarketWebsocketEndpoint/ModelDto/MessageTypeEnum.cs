@@ -7,5 +7,6 @@
         MarketPriceUpdateResponse,
         ProductionDeliveryRequest,
         ProductionDeliveryResponse,
+        Unknown,
     }
 }

@@ -39,17 +39,17 @@ namespace MarketWebsocketEndpoint.Core
 
             using (var redis = ConnectionMultiplexer.Connect(redisConnectionString))
             {
-                var service = new PlayerService(redis);
+                var playerService = new PlayerService(redis);
 
-                var energyDeliveryResponse = await service.DeliverEnergy(productionDeliveryRequest, session);
+                // Deliver energy
+                var energyDeliveryResponse = await playerService.DeliverEnergy(productionDeliveryRequest, session);
 
-                var responsePayload = JsonSerializer.Serialize<ProductionDeliveryResponse>(energyDeliveryResponse);
+                // Send response
+                var responsePayload = JsonSerializer.Serialize(energyDeliveryResponse);
+                var responseWrapper = new WebSocketResponseWrapper { MessageType = MessageTypeEnum.ProductionDeliveryResponse, Payload = responsePayload };
+                var responseString = JsonSerializer.Serialize(responseWrapper);
 
-                var genericResponse = new GenericWebSocketResponse { MessageType = MessageTypeEnum.ProductionDeliveryResponse, Payload = responsePayload };
-
-                var genericResponseString = JsonSerializer.Serialize<GenericWebSocketResponse>(genericResponse);
-
-                await session.WebSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(genericResponseString)), WebSocketMessageType.Text, true, CancellationToken.None);
+                await session.WebSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(responseString)), WebSocketMessageType.Text, true, CancellationToken.None);
             }
         }
 
@@ -72,22 +72,22 @@ namespace MarketWebsocketEndpoint.Core
 
                     Console.WriteLine(message);
 
-                    var genericRequest = JsonSerializer.Deserialize<GenericWebSocketRequest>(message, new JsonSerializerOptions
+                    var requestWrapper = JsonSerializer.Deserialize<WebSocketRequestWrapper>(message, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true,
                     });
 
-                    if (genericRequest == null)
+                    if (requestWrapper == null)
                     {
                         continue;
                     }
 
-                    switch (genericRequest.MessageType)
+                    switch (requestWrapper.MessageType)
                     {   
                         case MessageTypeEnum.ConsumptionDeliveryRequest:
                             break;
                         case MessageTypeEnum.ProductionDeliveryRequest:
-                            await HandleProductionDeliveryRequest(session, genericRequest.Payload);
+                            await HandleProductionDeliveryRequest(session, requestWrapper.Payload);
                             break;
                         default:
                             break;
