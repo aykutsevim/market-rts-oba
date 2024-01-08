@@ -4,9 +4,9 @@ namespace MarketWebsocketEndpoint.ModelDto
 {
     public class MarketPriceUpdateResponse
     {
-        public string EventName { get; set; }
-        public string Message { get; set; }
-        public string NewPrice { get; set; }
+        public string MarketName { get; set; } = String.Empty;
+        public Decimal BuyPrice { get; set; }
+        public Decimal SellPrice { get; set; }
 
     }
 }

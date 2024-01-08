@@ -30,16 +30,16 @@ WebSocketHandler.REDIS_CONNECTION_STRING = builder.Configuration.GetConnectionSt
 
 app.UseWebSockets(wsOptions);
 
-using (var redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnectionString")))
+var redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnectionString"));
+
+var subscriber = redis.GetSubscriber();
+subscriber.Subscribe(new RedisChannel("priceChannel", RedisChannel.PatternMode.Auto), async (channel, message) =>
 {
-    var subscriber = redis.GetSubscriber();
-    subscriber.Subscribe(channel: "priceChannel", async (channel, message) =>
-    {
-        // Forward the Redis message to connected WebSocket clients
-        Console.WriteLine("Subscribed");
-        await MarketSessionManager.SendToAllAsync("priceChanged", message);
-    });
-}
+    // Forward the Redis message to connected WebSocket clients
+    Console.WriteLine("Subscribed");
+    await MarketSessionManager.SendToAllAsync("priceChanged", message);
+});
+
 
 
 
