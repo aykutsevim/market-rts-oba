@@ -27,3 +27,4 @@ deploy:
     - ssh user@target-server "docker pull $DOCKER_IMAGE:latest && docker stop market-rts-oba || true && docker rm market-rts-oba || true && docker run -d --name market-rts-oba -p 80:80 $DOCKER_IMAGE:latest"
   only:
     - main
+  #
